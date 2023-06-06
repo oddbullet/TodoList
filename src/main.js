@@ -5,6 +5,16 @@ function isEmpty(value) {
     return (value == null || (typeof value === "string" && value.trim().length === 0));
 }
 
+function deleteItem() {
+    const divContainer = this.closest(".form-check");
+    if(this.checked) {
+        setTimeout(function() {
+            todoList.removeChild(divContainer);
+        }, 500);
+        
+    }
+}
+
 function newItem() {
     const task = prompt();
 
@@ -15,6 +25,7 @@ function newItem() {
         const input = document.createElement("input");
         input.classList.add("form-check-input");
         input.setAttribute("type", "checkbox");
+        input.addEventListener("change", deleteItem);
 
         const label = document.createElement("label");
         label.classList.add("form-check-label");
