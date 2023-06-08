@@ -1,8 +1,58 @@
 const addButton = document.getElementById("addButton");
 const todoList = document.getElementById("todoList");
+const timerButton = document.getElementById("timerButton");
+const timeDisplay = document.getElementById("timeDisplay");
+const selection = document.getElementById("taskSelection");
 
 function isEmpty(value) {
     return (value == null || (typeof value === "string" && value.trim().length === 0));
+}
+
+let interval = null;
+
+function timer() {
+    //Change button color
+    let red = this.classList.toggle("btn-danger");
+
+    let min = 0;
+    let sec = 0;
+    let hour = 0;
+    
+    if(red) {
+        interval = setInterval( function() {
+            sec++
+    
+            if(sec == 60) {
+                sec = 0;
+                min++;
+            }
+
+            if(min == 60) {
+                min = 0;
+                hour++;
+            }
+    
+            let secString = sec;
+            let minString = min;
+            let hourString = hour;
+
+            if(sec < 10) {
+                secString = "0" + secString;
+            }
+    
+            if(min < 10) {
+                minString = "0" + minString;
+            }
+
+            if(hour < 10) {
+                hourString = "0" + hourString;
+            }
+    
+            timeDisplay.textContent = hourString + ":" + minString + ":" + secString + " ";
+        }, 1000);
+    } else {
+        clearInterval(interval);
+    }
 }
 
 function deleteItem() {
@@ -31,28 +81,17 @@ function newItem() {
         label.classList.add("form-check-label");
         label.textContent = task;
 
-        const split = document.createElement("span");
-        split.textContent = " | ";
-
-        const timeDisplay = document.createElement("span")
-        timeDisplay.textContent = "00:00 ";
-
-        const timerButton = document.createElement("button");
-        timerButton.setAttribute("type", "button");
-        timerButton.classList.add("btn", "btn-success", "btn-sm");
-        timerButton.style.cssText = "--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: 1rem;";
-
         divContainer.appendChild(input);
         divContainer.appendChild(label);
-        divContainer.appendChild(split);
-        divContainer.appendChild(timeDisplay);
-        divContainer.appendChild(timerButton);
 
         todoList.appendChild(divContainer);
+
+        const option = document.createElement("option");
+        option.setAttribute("value", 10);
+        option.textContent = task;
+        selection.appendChild(option);
     }
 }
 
-// To get rid of the check we need to had a listener to each one.
-// So when a new item is created we need to add a new eventListener.
-
 addButton.addEventListener("click", newItem);
+timerButton.addEventListener("click", timer);

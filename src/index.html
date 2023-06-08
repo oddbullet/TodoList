@@ -17,8 +17,16 @@
     <div class="container-fluid">
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
             <div class="col-md-3 mb-2 mb-md-0 d-flex align-items-center">
-                    <span class="fs-4 me-2">Total Time: 00:00:00</span>
+                    <span class="fs-4 me-2" id="timeDisplay">00:00:00</span>
+                    <select class="form-select" id="taskSelection" aria-label="Default select example">
+                        <option selected></option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                    <button type="button" id="timerButton" class="btn btn-success ms-1" style="--bs-btn-padding-y: 1rem; --bs-btn-padding-x: 1rem;"></button>
             </div>
+
             <ul class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li class="nav-item">
                     <a href="#" class="nav-link active" aria-current="page">Todo</a>
@@ -40,9 +48,6 @@
             <label class="form-check-label">
                 Default checkbox
             </label>
-            <span>|</span>
-            <span>00:00</span>
-            <button type="button" class="btn btn-success btn-sm"  style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: 1rem;"></button>
         </div>
 
         <div class="form-check">
@@ -50,9 +55,6 @@
             <label class="form-check-label">
                 Default checkbox
             </label>
-            <span>|</span>
-            <span>00:00</span>
-            <button type="button" class="btn btn-danger btn-sm"  style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: 1rem;"></button>
         </div>
     </div>
     <!-- Script -->
