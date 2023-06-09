@@ -57,12 +57,19 @@ function timer() {
 
 function deleteItem() {
     const divContainer = this.closest(".form-check");
+    const value = divContainer.getAttribute("value");
+    console.log(value);
+
     if(this.checked) {
         setTimeout(function() {
             todoList.removeChild(divContainer);
         }, 500);
         
     }
+}
+
+function doneItem() {
+
 }
 
 function newItem() {
@@ -93,5 +100,37 @@ function newItem() {
     }
 }
 
+const todoLink = document.getElementById("todoButton");
+const doneLink = document.getElementById("doneButton");
+const doneList = document.getElementById("doneList");
+
+//Click Todo show form-check
+
+//Click Done
+//Hide form-check
+function todoTab() {
+    todoList.setAttribute("style", "display: block;")
+    doneList.setAttribute("style", "display: none;");
+
+    //Make Todo link disabled and done link able.
+    todoLink.classList.toggle("active"), todoLink.classList.toggle("disabled");
+    doneLink.classList.toggle("active"), doneLink.classList.toggle("disabled");
+}
+
+function doneTab() {
+    todoList.setAttribute("style", "display: none;");
+    doneList.setAttribute("style", "display: block;");
+
+    //Make Todo link able and done link disabled.
+    todoLink.classList.toggle("active"), todoLink.classList.toggle("disabled");
+    doneLink.classList.toggle("active"), doneLink.classList.toggle("disabled");
+}
+
+
+
+
+
 addButton.addEventListener("click", newItem);
 timerButton.addEventListener("click", timer);
+doneLink.addEventListener("click", doneTab);
+todoLink.addEventListener("click", todoTab);
