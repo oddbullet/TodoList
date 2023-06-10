@@ -8,6 +8,11 @@ function isEmpty(value) {
     return (value == null || (typeof value === "string" && value.trim().length === 0));
 }
 
+function generateUniqueValue() {
+    const value = Date.now() + Math.random().toString(36).substring(2);
+    return value;
+}
+
 let interval = null;
 
 function timer() {
@@ -57,17 +62,21 @@ function timer() {
 
 function deleteItem() {
     const divContainer = this.closest(".form-check");
-    const value = divContainer.getAttribute("value");
-    console.log(value);
+    const id = divContainer.id;
 
     if(this.checked) {
         setTimeout(function() {
             todoList.removeChild(divContainer);
+
+            const option = document.getElementById(id);
+            selection.removeChild(option);
         }, 500);
         
     }
 }
 
+//Pass in divContainer from deleteItem ??
+//Most of the code follow newItem. Just need to add a checked attribute to input.
 function doneItem() {
 
 }
@@ -76,8 +85,10 @@ function newItem() {
     const task = prompt();
 
     if(!isEmpty(task)) {
+        const val = generateUniqueValue();
         const divContainer = document.createElement("div");
         divContainer.classList.add("form-check");
+        divContainer.setAttribute("id", val);
 
         const input = document.createElement("input");
         input.classList.add("form-check-input");
@@ -94,7 +105,7 @@ function newItem() {
         todoList.appendChild(divContainer);
 
         const option = document.createElement("option");
-        option.setAttribute("value", 10);
+        option.setAttribute("id", val);
         option.textContent = task;
         selection.appendChild(option);
     }
