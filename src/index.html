@@ -33,8 +33,12 @@
                 </li>
             </ul>
             
-            <div class="col-md-3 text-end">
+            <div class="col-md-3 text-end" id="addContainer">
                 <button type="button" id="addButton" class="btn btn-outline-primary">+</button>
+            </div>
+
+            <div class="col-md-3 text-end" id="clearContainer" style="display: none;">
+                <button type="button" id="clearButton" class="btn btn-outline-danger">🗑️</button>
             </div>
         </header>
     </div>
@@ -55,6 +59,7 @@
         </div>
     </div>
 
+    <!-- DONE TAB -->
     <div class="container-fluid" id="doneList" style="display: none;">
         <div class="form-check">
             <input class="form-check-input" type="checkbox" checked>

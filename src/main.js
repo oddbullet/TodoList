@@ -1,6 +1,12 @@
 const addButton = document.getElementById("addButton");
-const todoList = document.getElementById("todoList");
+const clearButton = document.getElementById("clearButton");
 const timerButton = document.getElementById("timerButton");
+
+const todoList = document.getElementById("todoList");
+const doneList = document.getElementById("doneList");
+const addContainer = document.getElementById("addContainer");
+const clearContainer = document.getElementById("clearContainer");
+
 const timeDisplay = document.getElementById("timeDisplay");
 const selection = document.getElementById("taskSelection");
 
@@ -37,21 +43,9 @@ function timer() {
                 hour++;
             }
     
-            let secString = sec;
-            let minString = min;
-            let hourString = hour;
-
-            if(sec < 10) {
-                secString = "0" + secString;
-            }
-    
-            if(min < 10) {
-                minString = "0" + minString;
-            }
-
-            if(hour < 10) {
-                hourString = "0" + hourString;
-            }
+            let secString = sec.toString().padStart(2, "0");
+            let minString = min.toString().padStart(2, "0");
+            let hourString = hour.toString().padStart(2, "0");
     
             timeDisplay.textContent = hourString + ":" + minString + ":" + secString + " ";
         }, 1000);
@@ -70,15 +64,28 @@ function deleteItem() {
 
             const option = document.getElementById(id);
             selection.removeChild(option);
+            doneItem(divContainer);
         }, 500);
         
     }
 }
 
-//Pass in divContainer from deleteItem ??
-//Most of the code follow newItem. Just need to add a checked attribute to input.
-function doneItem() {
+//Still need time.
+function doneItem(divContainer) {
+    const doneDate = new Date(Date.now());
+    const month = doneDate.getMonth() + 1; // Adding 1 to the month since it is zero-based
+    const day = doneDate.getDate();
+    const year = doneDate.getFullYear();
 
+    const formattedDate = `${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}/${year}`;
+
+    const input = divContainer.querySelector("input");
+    input.removeEventListener("change", deleteItem);
+
+    const label = divContainer.querySelector("label");
+    const item = label.textContent;
+    label.textContent = item + " | 00:00:00" + " | " + formattedDate;
+    doneList.appendChild(divContainer);
 }
 
 function newItem() {
@@ -113,7 +120,6 @@ function newItem() {
 
 const todoLink = document.getElementById("todoButton");
 const doneLink = document.getElementById("doneButton");
-const doneList = document.getElementById("doneList");
 
 //Click Todo show form-check
 
@@ -122,6 +128,8 @@ const doneList = document.getElementById("doneList");
 function todoTab() {
     todoList.setAttribute("style", "display: block;")
     doneList.setAttribute("style", "display: none;");
+    addContainer.setAttribute("style", "display: block;");
+    clearContainer.setAttribute("style", "display: none;");
 
     //Make Todo link disabled and done link able.
     todoLink.classList.toggle("active"), todoLink.classList.toggle("disabled");
@@ -131,10 +139,16 @@ function todoTab() {
 function doneTab() {
     todoList.setAttribute("style", "display: none;");
     doneList.setAttribute("style", "display: block;");
+    addContainer.setAttribute("style", "display: none;");
+    clearContainer.setAttribute("style", "display: block;");
 
     //Make Todo link able and done link disabled.
     todoLink.classList.toggle("active"), todoLink.classList.toggle("disabled");
     doneLink.classList.toggle("active"), doneLink.classList.toggle("disabled");
+}
+
+function clearDoneTab() {
+    
 }
 
 
@@ -142,6 +156,7 @@ function doneTab() {
 
 
 addButton.addEventListener("click", newItem);
+clearButton.addEventListener("click", clearDoneTab)
 timerButton.addEventListener("click", timer);
 doneLink.addEventListener("click", doneTab);
 todoLink.addEventListener("click", todoTab);
