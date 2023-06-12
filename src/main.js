@@ -3,12 +3,46 @@ const clearButton = document.getElementById("clearButton");
 const timerButton = document.getElementById("timerButton");
 
 const todoList = document.getElementById("todoList");
-const doneList = document.getElementById("doneList");
+let doneList = document.getElementById("doneList"); // Will Change
 const addContainer = document.getElementById("addContainer");
 const clearContainer = document.getElementById("clearContainer");
 
 const timeDisplay = document.getElementById("timeDisplay");
 const selection = document.getElementById("taskSelection");
+
+const taskMap = new Map();
+
+//need testing
+class Task {
+    constructor(id, task, time, date, done) {
+        this.id = id;
+        this.task = task;
+        this.time = time;
+        this.date = date;
+        this.done = done;
+    }
+
+    changeTime(newTime) {
+        this.time = newTime;
+    }
+
+    changeDate(newDate) {
+        this.date = newDate;
+    }
+
+    changeDone() {
+        if(this.done) {
+            this.done = false;
+        } else {
+            this.done = true;
+        }
+    }
+}
+
+function saveData(taskMap) {
+    const taskArray = taskMap.entries();
+    console.log(taskArray);
+}
 
 function isEmpty(value) {
     return (value == null || (typeof value === "string" && value.trim().length === 0));
@@ -80,18 +114,25 @@ function doneItem(divContainer) {
     const formattedDate = `${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}/${year}`;
 
     const input = divContainer.querySelector("input");
+    const id = divContainer.id;
     input.removeEventListener("change", deleteItem);
 
     const label = divContainer.querySelector("label");
     const item = label.textContent;
     label.textContent = item + " | 00:00:00" + " | " + formattedDate;
     doneList.appendChild(divContainer);
+
+    //////////
+    const task = taskMap.get(id);
+    task.changeDate(formattedDate);
+    task.changeDone();
+    saveData(taskMap);
 }
 
 function newItem() {
-    const task = prompt();
+    const taskName = prompt();
 
-    if(!isEmpty(task)) {
+    if(!isEmpty(taskName)) {
         const val = generateUniqueValue();
         const divContainer = document.createElement("div");
         divContainer.classList.add("form-check");
@@ -104,7 +145,7 @@ function newItem() {
 
         const label = document.createElement("label");
         label.classList.add("form-check-label");
-        label.textContent = task;
+        label.textContent = taskName;
 
         divContainer.appendChild(input);
         divContainer.appendChild(label);
@@ -113,8 +154,13 @@ function newItem() {
 
         const option = document.createElement("option");
         option.setAttribute("id", val);
-        option.textContent = task;
+        option.textContent = taskName;
         selection.appendChild(option);
+
+        //////////
+        const task = new Task(val, taskName, 0, "", false);
+        taskMap.set(val, task);
+        saveData(taskMap);
     }
 }
 
@@ -147,13 +193,19 @@ function doneTab() {
     doneLink.classList.toggle("active"), doneLink.classList.toggle("disabled");
 }
 
+//May need to change.
 function clearDoneTab() {
-    
+    const body = doneList.parentNode
+    body.removeChild(doneList);
+
+    const divContainer = document.createElement("div");
+    divContainer.classList.add("container-fluid");
+    divContainer.setAttribute("id", "doneList");
+    divContainer.setAttribute("style", "display: block;")
+
+    body.appendChild(divContainer);
+    doneList = document.getElementById("doneList");
 }
-
-
-
-
 
 addButton.addEventListener("click", newItem);
 clearButton.addEventListener("click", clearDoneTab)
