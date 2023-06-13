@@ -10,7 +10,7 @@ const clearContainer = document.getElementById("clearContainer");
 const timeDisplay = document.getElementById("timeDisplay");
 const selection = document.getElementById("taskSelection");
 
-const taskMap = new Map();
+let taskMap = new Map();
 
 //need testing
 class Task {
@@ -20,14 +20,6 @@ class Task {
         this.time = time;
         this.date = date;
         this.done = done;
-    }
-
-    changeTime(newTime) {
-        this.time = newTime;
-    }
-
-    changeDate(newDate) {
-        this.date = newDate;
     }
 
     changeDone() {
@@ -40,8 +32,21 @@ class Task {
 }
 
 function saveData(taskMap) {
-    const taskArray = taskMap.entries();
-    console.log(taskArray);
+    const taskArray = Array.from(taskMap.entries());
+    localStorage.setItem("taskMap", JSON.stringify(taskArray));
+}
+
+function loadData(taskMap) {
+    const storedArray = JSON.parse(localStorage.getItem('taskMap'));
+    taskMap = new Map(storedArray);
+}
+
+function loadTask() {
+
+}
+
+function loadDone() {
+
 }
 
 function isEmpty(value) {
@@ -53,8 +58,26 @@ function generateUniqueValue() {
     return value;
 }
 
+function addTime(additionTime, oldTime) {
+    let carry = 0;
+    for(let i = 2; i > 0; i--) {
+        oldTime[i] = oldTime[i] + additionTime[i] + carry;
+        carry = 0;
+        if(i !== 0) {
+            if(oldTime[i] >= 60) {
+                carry++;
+                oldTime[i] = oldTime[i] - 60;
+            }
+        }
+    }
+    return oldTime;
+}
+
 let interval = null;
 
+/*
+
+*/
 function timer() {
     //Change button color
     let red = this.classList.toggle("btn-danger");
@@ -84,6 +107,13 @@ function timer() {
             timeDisplay.textContent = hourString + ":" + minString + ":" + secString + " ";
         }, 1000);
     } else {
+        const timeArray = timeDisplay.textContent.split(":").map(Number);
+        const optionId = selection.options[selection.selectedIndex].id;
+        if(optionId !== "blankOption") {
+            const task = taskMap.get(optionId);
+            task.time = addTime(timeArray, task.time);
+            saveData(taskMap);
+        }
         clearInterval(interval);
     }
 }
@@ -104,7 +134,6 @@ function deleteItem() {
     }
 }
 
-//Still need time.
 function doneItem(divContainer) {
     const doneDate = new Date(Date.now());
     const month = doneDate.getMonth() + 1; // Adding 1 to the month since it is zero-based
@@ -117,14 +146,17 @@ function doneItem(divContainer) {
     const id = divContainer.id;
     input.removeEventListener("change", deleteItem);
 
+    const task = taskMap.get(id);
+    const time = task.time;
+    const formattedTime = `${time[0].toString().padStart(2, "0")}:${time[1].toString().padStart(2, "0")}:${time[2].toString().padStart(2, "0")}`;
+
     const label = divContainer.querySelector("label");
     const item = label.textContent;
-    label.textContent = item + " | 00:00:00" + " | " + formattedDate;
+    label.textContent = item + " | " + formattedTime + " | " + formattedDate;
     doneList.appendChild(divContainer);
 
     //////////
-    const task = taskMap.get(id);
-    task.changeDate(formattedDate);
+    task.date = formattedDate;
     task.changeDone();
     saveData(taskMap);
 }
@@ -158,7 +190,7 @@ function newItem() {
         selection.appendChild(option);
 
         //////////
-        const task = new Task(val, taskName, 0, "", false);
+        const task = new Task(val, taskName, [0, 0, 0], "", false);
         taskMap.set(val, task);
         saveData(taskMap);
     }
@@ -193,18 +225,14 @@ function doneTab() {
     doneLink.classList.toggle("active"), doneLink.classList.toggle("disabled");
 }
 
-//May need to change.
 function clearDoneTab() {
-    const body = doneList.parentNode
-    body.removeChild(doneList);
-
-    const divContainer = document.createElement("div");
-    divContainer.classList.add("container-fluid");
-    divContainer.setAttribute("id", "doneList");
-    divContainer.setAttribute("style", "display: block;")
-
-    body.appendChild(divContainer);
-    doneList = document.getElementById("doneList");
+    const formChecks = doneList.querySelectorAll(".form-check");
+    formChecks.forEach(formCheck => {
+        const id = formCheck.id;
+        doneList.removeChild(formCheck);
+        taskMap.delete(id);
+    });
+    saveData(taskMap);
 }
 
 addButton.addEventListener("click", newItem);
@@ -212,3 +240,4 @@ clearButton.addEventListener("click", clearDoneTab)
 timerButton.addEventListener("click", timer);
 doneLink.addEventListener("click", doneTab);
 todoLink.addEventListener("click", todoTab);
+loadData();
