@@ -31,22 +31,89 @@ class Task {
     }
 }
 
-function saveData(taskMap) {
-    const taskArray = Array.from(taskMap.entries());
+function saveData(data) {
+    const taskArray = Array.from(data.entries());
     localStorage.setItem("taskMap", JSON.stringify(taskArray));
 }
 
-function loadData(taskMap) {
+//Only id and label.
+function loadTask(data) {
+    const mapVal = data.values();
+    for(const value of mapVal) {
+        const id = value.id;
+        const task = value.task;
+        const done = value.done;
+
+        if(!done) {
+            const divContainer = document.createElement("div");
+            divContainer.classList.add("form-check");
+            divContainer.setAttribute("id", id);
+
+            const input = document.createElement("input");
+            input.classList.add("form-check-input");
+            input.setAttribute("type", "checkbox");
+            input.addEventListener("change", deleteItem);
+
+            const label = document.createElement("label");
+            label.classList.add("form-check-label");
+            label.textContent = task;
+
+            divContainer.appendChild(input);
+            divContainer.appendChild(label);
+
+            todoList.appendChild(divContainer);
+
+            const option = document.createElement("option");
+            option.setAttribute("id", id);
+            option.textContent = task;
+            selection.appendChild(option);
+        }
+    }
+}
+
+//id, label, time and date.
+function loadDone(data) {
+    const mapVal = data.values();
+    for(const value of mapVal) {
+        const id = value.id;
+        const task = value.task;
+        const time = value.time;
+        const date = value.date;
+        const done = value.done;
+
+        if(done) {
+            const divContainer = document.createElement("div");
+            divContainer.classList.add("form-check");
+            divContainer.setAttribute("id", id);
+
+            const input = document.createElement("input");
+            input.classList.add("form-check-input");
+            input.setAttribute("type", "checkbox");
+            input.checked = true;
+
+            const label = document.createElement("label");
+            label.classList.add("form-check-label");
+            label.textContent = task;
+
+            divContainer.appendChild(input);
+            divContainer.appendChild(label);
+
+            doneList.appendChild(divContainer);
+        }
+    }
+}
+
+function loadData() {
     const storedArray = JSON.parse(localStorage.getItem('taskMap'));
-    taskMap = new Map(storedArray);
-}
-
-function loadTask() {
-
-}
-
-function loadDone() {
-
+    const tempMap = new Map(storedArray);
+    const tempMapArray = tempMap.values();
+    for(const value of tempMapArray) {
+        const taskObj = new Task(value.id, value.task, value.time, value.date, value.done);
+        taskMap.set(value.id, taskObj);
+    }
+    
+    loadTask(taskMap);
+    loadDone(taskMap);
 }
 
 function isEmpty(value) {
