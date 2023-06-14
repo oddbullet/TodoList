@@ -12,7 +12,6 @@ const selection = document.getElementById("taskSelection");
 
 let taskMap = new Map();
 
-//need testing
 class Task {
     constructor(id, task, time, date, done) {
         this.id = id;
@@ -30,13 +29,23 @@ class Task {
         }
     }
 }
+/*
+data - a map = {id, task object}
 
+Turn the map entries into an array. 
+Then it is turn into JSON and stored in local storage.
+*/
 function saveData(data) {
     const taskArray = Array.from(data.entries());
     localStorage.setItem("taskMap", JSON.stringify(taskArray));
 }
 
-//Only id and label.
+/*
+data = a map = {id, task object}
+
+Takes the values of the map. The three important information we need is id, task name, and if the task is done.
+If the task is completed, then don't display it in the task tab.
+*/
 function loadTask(data) {
     const mapVal = data.values();
     for(const value of mapVal) {
@@ -71,7 +80,12 @@ function loadTask(data) {
     }
 }
 
-//id, label, time and date.
+/*
+data = a map = {id, task object}
+
+Takes the values of the map. The important information we need is id, task name, time, date, and if the task is done.
+If the task is done. It loads it in the done tab.
+*/
 function loadDone(data) {
     const mapVal = data.values();
     for(const value of mapVal) {
@@ -91,9 +105,11 @@ function loadDone(data) {
             input.setAttribute("type", "checkbox");
             input.checked = true;
 
+            const formattedTime = `${time[0].toString().padStart(2, "0")}:${time[1].toString().padStart(2, "0")}:${time[2].toString().padStart(2, "0")}`;
+
             const label = document.createElement("label");
             label.classList.add("form-check-label");
-            label.textContent = task;
+            label.textContent = task + " | " + formattedTime + " | " + date;
 
             divContainer.appendChild(input);
             divContainer.appendChild(label);
@@ -103,6 +119,13 @@ function loadDone(data) {
     }
 }
 
+/*
+Goes to the local storage and retrieves the stored information about the tasks.
+The data is stored in JSON form so it need to be converted back into map form.
+The stored data is no longer a instance of the Task class. So, they all need to be reconstruct.
+
+Once the data is loaded. Load the task and done tab.
+*/
 function loadData() {
     const storedArray = JSON.parse(localStorage.getItem('taskMap'));
     const tempMap = new Map(storedArray);
@@ -142,9 +165,6 @@ function addTime(additionTime, oldTime) {
 
 let interval = null;
 
-/*
-
-*/
 function timer() {
     //Change button color
     let red = this.classList.toggle("btn-danger");
@@ -266,10 +286,6 @@ function newItem() {
 const todoLink = document.getElementById("todoButton");
 const doneLink = document.getElementById("doneButton");
 
-//Click Todo show form-check
-
-//Click Done
-//Hide form-check
 function todoTab() {
     todoList.setAttribute("style", "display: block;")
     doneList.setAttribute("style", "display: none;");
